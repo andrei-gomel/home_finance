@@ -133,3 +133,15 @@ def get_most_popular_item():
         cursor.execute(query)
         result = cursor.fetchone()
     return result
+
+
+def update_payments(data):
+    connection = connection_db()
+    success = False
+    with connection.cursor() as cursor:
+        update_query = "UPDATE `payment` SET price=%s WHERE id=%s"
+        cursor.execute(update_query, data)
+        connection.commit()
+        # print(cursor.rowcount, "was updated.")
+        success = True
+    return success
