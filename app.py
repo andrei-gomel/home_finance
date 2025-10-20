@@ -188,12 +188,16 @@ class TableFrame(tk.Frame):
         price_entry = tk.Entry(edit_window)
         price_entry.grid(row=2, column=1, padx=10, pady=5)
         price_entry.insert(0, self.item_payment['price'])
-        button_save = ttk.Button(edit_window, text="Сохранить", command=lambda:self.save_item(table))
+        button_save = ttk.Button(edit_window, text="Сохранить", command=lambda:self.update_item(self.id))
         button_save.grid(row=3, columnspan=2)
 
 
-    def save_item():
-        pass
+    def update_item():
+        price = float(self.price_entry.get())
+        data = (price, id)
+        if db.update_payments(data):
+            self.edit_window.destroy()
+            self.master.refresh()
 
 
 class ButtomFrame(tk.Frame):
