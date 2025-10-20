@@ -165,34 +165,36 @@ class TableFrame(tk.Frame):
         self.selected_item = table.selection()[0]
         # if selected_item.startswith('I'):
         self.item_id = int(self.selected_item[1:], 16)  # Интерпретируем как hex и преобразуем в int
-        print(self.item_id)
+        # print(self.item_id)
         self.item_payment = db.select_one(self.item_id)
+        self.id = self.item_payment['id']
+        # print(self.item_payment['id'])
         # Создаем дочернее окно
-        edit_window = tk.Tk()
-        edit_window.title("Редактировать запись")
-        edit_window.geometry("400x300")
-        edit_window.grab_set()  # Сделать модальным
+        self.edit_window = tk.Tk()
+        self.edit_window.title("Редактировать запись")
+        self.edit_window.geometry("400x300")
+        self.edit_window.grab_set()  # Сделать модальным
         
         # Поля ввода
-        tk.Label(edit_window, text="Дата:").grid(row=0, column=0, padx=10, pady=5)
-        data_entry = tk.Entry(edit_window)
-        data_entry.grid(row=0, column=1, padx=10, pady=5)
-        data_entry.insert(0, self.item_payment['data'])  # Предзаполнение
+        tk.Label(self.edit_window, text="Дата:").grid(row=0, column=0, padx=10, pady=5)
+        self.data_entry = tk.Entry(self.edit_window)
+        self.data_entry.grid(row=0, column=1, padx=10, pady=5)
+        self.data_entry.insert(0, self.item_payment['data'])  # Предзаполнение
         
-        tk.Label(edit_window, text="Категория:").grid(row=1, column=0, padx=10, pady=5)
-        name_entry = tk.Entry(edit_window)
-        name_entry.grid(row=1, column=1, padx=10, pady=5)
-        name_entry.insert(0, self.item_payment['name'])
+        tk.Label(self.edit_window, text="Категория:").grid(row=1, column=0, padx=10, pady=5)
+        self.name_entry = tk.Entry(self.edit_window)
+        self.name_entry.grid(row=1, column=1, padx=10, pady=5)
+        self.name_entry.insert(0, self.item_payment['name'])
 
-        tk.Label(edit_window, text="Сумма:").grid(row=2, column=0, padx=10, pady=5)
-        price_entry = tk.Entry(edit_window)
-        price_entry.grid(row=2, column=1, padx=10, pady=5)
-        price_entry.insert(0, self.item_payment['price'])
-        button_save = ttk.Button(edit_window, text="Сохранить", command=lambda:self.update_item(self.id))
+        tk.Label(self.edit_window, text="Сумма:").grid(row=2, column=0, padx=10, pady=5)
+        self.price_entry = tk.Entry(self.edit_window)
+        self.price_entry.grid(row=2, column=1, padx=10, pady=5)
+        self.price_entry.insert(0, self.item_payment['price'])
+        button_save = ttk.Button(self.edit_window, text="Сохранить", command=lambda:self.update_item(self.id))
         button_save.grid(row=3, columnspan=2)
 
 
-    def update_item():
+    def update_item(self, id):
         price = float(self.price_entry.get())
         data = (price, id)
         if db.update_payments(data):
