@@ -11,6 +11,7 @@ class App(tk.Tk):
         # print(self.style.theme_names())
         self.style.theme_use('clam')
         self.title('Домашняя бухгалтерия')
+        self.geometry("950x500+200+150")
         self['background'] = '#EBEBEB'
         self.conf = {'padx':(10, 30), 'pady':10}
         self.bold_font = 'Helvetica 15 bold'
@@ -86,7 +87,6 @@ class AddForm(tk.Frame):
             flag = False
         if flag:
             insert_data = (category_id, data, price)
-            # print(insert_data)
             if db.insert_new_payment(insert_data):
                 self.master.refresh()
 
@@ -99,7 +99,6 @@ class StatFrame(tk.Frame):
         self.most_popular_item = db.get_most_popular_item()
         self.most_rich_item = db.get_most_rich_item()
         self.total_sum = db.get_total_sum()
-        # print('Самая дорогая категория ', self.most_rich_item['name'])
         print('Итого за месяц: ', self.total_sum['Total'])
         self.put_widgets()
 
@@ -141,8 +140,6 @@ class TableFrame(tk.Frame):
     def put_widgets(self):
         heads = ['id', 'Дата', 'Наименование', 'Сумма']
         table = ttk.Treeview(self, show="headings")
-        # selected_items = self.table.selection()
-        # print(selected_items)
         table['columns'] = heads
         # Меняем очередность вывода данных
         # table['displaycolumns'] = ['price', 'model', 'owner', 'id']
@@ -163,16 +160,14 @@ class TableFrame(tk.Frame):
         
     def edit_item(self, table):
         self.selected_item = table.selection()[0]
-        # if selected_item.startswith('I'):
         self.item_id = int(self.selected_item[1:], 16)  # Интерпретируем как hex и преобразуем в int
-        # print(self.item_id)
         self.item_payment = db.select_one(self.item_id)
         self.id = self.item_payment['id']
         # print(self.item_payment['id'])
         # Создаем дочернее окно
         self.edit_window = tk.Tk()
         self.edit_window.title("Редактировать запись")
-        self.edit_window.geometry("400x300")
+        self.edit_window.geometry("400x300+450+250")
         self.edit_window.grab_set()  # Сделать модальным
         
         # Поля ввода
@@ -201,24 +196,6 @@ class TableFrame(tk.Frame):
             self.edit_window.destroy()
             self.master.refresh()
 
-
-class ButtomFrame(tk.Frame):
-    """docstring for ButtomFrame"""
-    def __init__(self, parent):
-        super().__init__(parent)
-        self['background'] = self.master['background']
-        # self.put_widgets()
-
-
-    def put_widgets(self):
-        self.button_submit = ttk.Button(self, text="Сохранить", command=self.edit_item)
-        self.button_submit.grid(row=3, column=0, sticky="n", cnf=self.master.conf)
-        
-
-    def edit_item(self):
-        self.selected_item = TableFrame.get_number_list(self)
-        print(self.selected_item)
-        
 
 if __name__ == "__main__":
     app = App()
